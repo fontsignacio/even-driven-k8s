@@ -1,0 +1,26 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: users-service-deployment
+  labels:
+    app: users-service
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: users-service
+  template:
+    metadata:
+      labels:
+        app: users-service
+    spec:
+      containers:
+        - name: users-service
+          # La imagen se construirá y se subirá a GitHub Container Registry (GHCR)
+          # Reemplaza <YOUR_GHCR_USERNAME> y <YOUR_REPOSITORY_NAME>
+          image: ghcr.io/<YOUR_GHCR_USERNAME>/<YOUR_REPOSITORY_NAME>/users-service:latest
+          ports:
+            - containerPort: 8080
+          envFrom:
+            - secretRef:
+                name: users-postgres-secret

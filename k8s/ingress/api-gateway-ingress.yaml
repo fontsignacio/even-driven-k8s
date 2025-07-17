@@ -1,0 +1,35 @@
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: api-gateway-ingress
+  annotations:
+    # Esta anotación es específica para el NGINX Ingress Controller
+    # Permite reescribir la URL para que el path base del servicio sea la raíz dentro del pod
+    nginx.ingress.kubernetes.io/rewrite-target: /$2
+spec:
+  rules:
+    - http:
+        paths:
+          # Regla para el users-service
+          # Cualquier solicitud que comience con /users/ (o solo /users) será enrutada al users-service
+          - path: /users(/|$)(.*)
+            pathType: Prefix # Indica que el path debe coincidir con el prefijo
+            backend:
+              service:
+                name: users-service-service # Nombre del servicio de Kubernetes para users-service
+                port:
+                  number: 80 # Puerto del servicio de Kubernetes (que mapea al 8080 del contenedor)
+          # Regla para el orders-service
+          # Cualquier solicitud que comience con /orders/ (o solo /orders) será enrutada al orders-service
+          - path: /orders(/|$)(.*)
+            pathType: Prefix
+            backend:
+              service:
+                name: orders-service-service # Nombre del servicio de Kubernetes para orders-service
+                port:
+                  number: 80 # Puerto del servicio de Kubernetes (que mapea al 8080 del contenedor)
+  # En un entorno de producción, se configuraría TLS con un cert-manager
+  # tls:
+  #   - hosts:
+  #       - your.domain.com
+  #     secretName: your-tls-secret
