@@ -16,9 +16,7 @@ spec:
     spec:
       containers:
         - name: users-service
-          # La imagen se construirá y se subirá a GitHub Container Registry (GHCR)
-          # Reemplaza <YOUR_GHCR_USERNAME> y <YOUR_REPOSITORY_NAME>
-          image: ghcr.io/<YOUR_GHCR_USERNAME>/<YOUR_REPOSITORY_NAME>/users-service:latest
+          image: ghcr.io/fontsignacio/even-driven-k8s/users-service:latest
           ports:
             - containerPort: 8080
           envFrom:
