@@ -13,7 +13,7 @@ spec:
           # Regla para el users-service
           # Cualquier solicitud que comience con /users/ (o solo /users) será enrutada al users-service
           - path: /users(/|$)(.*)
-            pathType: Prefix # Indica que el path debe coincidir con el prefijo
+            pathType: ImplementationSpecific # Indica que el path usa regex específico de NGINX
             backend:
               service:
                 name: users-service-service # Nombre del servicio de Kubernetes para users-service
@@ -22,7 +22,7 @@ spec:
           # Regla para el orders-service
           # Cualquier solicitud que comience con /orders/ (o solo /orders) será enrutada al orders-service
           - path: /orders(/|$)(.*)
-            pathType: Prefix
+            pathType: ImplementationSpecific
             backend:
               service:
                 name: orders-service-service # Nombre del servicio de Kubernetes para orders-service
