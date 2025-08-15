@@ -1,0 +1,35 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: orders-service-deployment # Nombre del Deployment
+  labels:
+    app: orders-service
+spec:
+  replicas: 1 # Puedes ajustar el número de réplicas según la carga
+  selector:
+    matchLabels:
+      app: orders-service
+  template:
+    metadata:
+      labels:
+        app: orders-service
+    spec:
+      containers:
+        - name: orders-service
+          image: orders-service:latest # Nombre de la imagen Docker que construiste
+          imagePullPolicy: Never # Para usar la imagen local de Minikube
+          ports:
+            - containerPort: 8080 # Puerto que escucha tu aplicación Node.js
+          env:
+            # Variables de entorno para Kafka
+            - name: KAFKA_BROKERS
+              value: "kafka-service:9092" # Nombre del servicio de Kafka en K8s
+            # Variables de entorno para la conexión a PostgreSQL
+            - name: DB_HOST
+              value: "orders-postgres-service" # Nombre del servicio de PostgreSQL para orders-service
+            - name: DB_PORT
+              value: "5432" # Puerto por defecto de PostgreSQL
+          envFrom:
+            # Inyecta las variables del Secret de PostgreSQL
+            - secretRef:
+                name: orders-postgres-secret # Referencia al Secret que creaste

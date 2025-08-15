@@ -1,0 +1,26 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: notifications-service-deployment # Nombre del Deployment
+  labels:
+    app: notifications-service
+spec:
+  replicas: 1 # Puedes ajustar el número de réplicas
+  selector:
+    matchLabels:
+      app: notifications-service
+  template:
+    metadata:
+      labels:
+        app: notifications-service
+    spec:
+      containers:
+        - name: notifications-service
+          image: notifications-service:latest # Nombre de la imagen Docker que construiste
+          imagePullPolicy: Never # Para usar la imagen local de Minikube
+          ports:
+            - containerPort: 8000 # Puerto que escucha tu aplicación FastAPI
+          env:
+            # Variable de entorno para los brokers de Kafka
+            - name: KAFKA_BROKERS
+              value: "kafka-service:9092" # Nombre del servicio de Kafka en K8s

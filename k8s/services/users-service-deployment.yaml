@@ -16,7 +16,8 @@ spec:
     spec:
       containers:
         - name: users-service
-          image: ghcr.io/fontsignacio/even-driven-k8s/users-service:latest
+          image: users-service:latest # Asegúrate de que el tag coincida con tu build
+          imagePullPolicy: Never # ¡Este es el cambio clave!
           ports:
             - containerPort: 8080
           envFrom:

@@ -1,0 +1,48 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: orders-postgres-deployment
+  labels:
+    app: orders-postgres
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: orders-postgres
+  template:
+    metadata:
+      labels:
+        app: orders-postgres
+    spec:
+      containers:
+        - name: postgres
+          image: postgres:13
+          ports:
+            - containerPort: 5432
+          env: # <-- Añadimos esta sección para pasar variables de entorno específicas
+            - name: POSTGRES_DB # Nombre de la base de datos que PostgreSQL creará
+              valueFrom:
+                secretKeyRef:
+                  name: orders-postgres-secret
+                  key: DB_NAME
+            - name: POSTGRES_USER # Usuario de la base de datos
+              valueFrom:
+                secretKeyRef:
+                  name: orders-postgres-secret
+                  key: DB_USERNAME
+            - name: POSTGRES_PASSWORD # ¡La contraseña del superusuario, crucial!
+              valueFrom:
+                secretKeyRef:
+                  name: orders-postgres-secret
+                  key: DB_PASSWORD
+          volumeMounts:
+            - name: postgres-storage
+              mountPath: /var/lib/postgresql/data
+            - name: postgres-init-script # Nuevo volumen para el script
+              mountPath: /docker-entrypoint-initdb.d # Directorio de inicialización de PostgreSQL
+      volumes:
+        - name: postgres-storage
+          emptyDir: {} # O persistentVolumeClaim si lo prefieres
+        - name: postgres-init-script # Nuevo volumen para el script
+          configMap:
+            name: orders-postgres-init-script # Nombre del ConfigMap
